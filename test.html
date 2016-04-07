@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test</title>
+  <style>
+     .center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    
+    #display{
+        font-size: 128pt;
+        font-weight: bold;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+  </style>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+</head>
+
+<body ng-app="ContinuousPerformanceTest" ng-controller="test">
+    <section class="center" ng-show="status === 'start'" >
+        <form class="form-inline">
+            <label for="id">ID</label>
+            <input type='text' name='id' ng-model="data.id" class="form-control"></input>
+            <button id='startButton' class="btn btn-default">Start</button>
+        </form>
+    </section>
+    <section id="display" class="center" ng-show="status === 'in progress'" >
+        <div class="stimulus">{{stimulus.letter}}</div>
+    </section>
+    <section id='goodbye' ng-show="status === 'complete'" class="center">
+        <p class="lead">Thank you.  Please let the experimenter know that you have finished.</p>
+    </section>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+  <script src="config.js"></script>
+  <script src="test-controller.js"></script>
+</body>
+</html>
