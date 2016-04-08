@@ -13,7 +13,7 @@ function test($scope, $interval, $timeout){
     var num = 0;
     var startTime = new Date();
     $scope.stimulus = '';
-    $scope.status = 'start';
+    $scope.status = 'introduction';
     $scope.data = {
         id: '',
         targetsHit : 0,
@@ -24,14 +24,42 @@ function test($scope, $interval, $timeout){
     };
 
     //set up start button click event
-    document.getElementById('startButton').addEventListener('click', runTest);
+    document.getElementById('startButton').addEventListener('click', toLoading);
+    document.getElementById('practiceButton').addEventListener('click', toLoading);
+    document.getElementById('instructionsButton').addEventListener('click', toInstructions);
+    
+    function runSpinner(){
+        loadText = document.getElementById('loadText');
+        loadText.textContent = 'READY';
+        loadText.style.color = 'red';
+        $timeout(function(){
+            loadText.textContent = 'SET';
+            loadText.style.color = 'yellow';
+            $timeout(function(){
+                 loadText.textContent = 'GO';
+                 loadText.style.color = 'green';
+                $timeout(runTest, 1500);
+             }, 1500);
+        }, 1500);
+    }
+    
+    function toLoading(){
+       $scope.status = 'loading';
+       $scope.$apply();
+       runSpinner();
+    }
+    
+    function toInstructions(){
+       $scope.status = 'instructions';
+       $scope.$apply();
+    }
     
     function runTest(){
         $scope.status = 'in progress';
         
         // setup mouse click events
         document.addEventListener('contextmenu', stopDefault, false);
-        document.addEventListener('mousedown', recordInput);
+        document.addEventListener('keydown', recordInput);
         
         // Start interval
         var stop = $interval(runInterval, config.intervalOnScreen + config.intervalBreak);
@@ -51,10 +79,21 @@ function test($scope, $interval, $timeout){
             }else{
                 $interval.cancel(stop);
                 console.log(new Date() - startTime);
-                localStorage[$scope.data.id] = angular.toJson($scope.data);
-                $scope.status = 'complete';
+                if(config.length === 30){ 
+                    $scope.status = 'start';
+      
+                    config.length = 600;
+                    seq = createSequence(config.length, config.percent);
+                    num = 0;
+                    $scope.data.targetsHit = 0;
+                    $scope.data.targetsMissed  = 0;
+                    $scope.data.falseAlarms = 0;
+                    $scope.data.nonTargetsMissed = 0;
+                 } else{
+                     $scope.status = 'complete';
+                     localStorage[$scope.data.id] = angular.toJson($scope.data);
+                 }
                 document.removeEventListener('contextmenu', stopDefault);
-                document.removeEventListener('mousedown', recordInput);
             }
         }
         
@@ -62,11 +101,11 @@ function test($scope, $interval, $timeout){
             e.stopPropagation(); 
             e.preventDefault();
             if(!$scope.stimulus.clicked){
-                if(e.button === 2 && $scope.stimulus.target){$scope.data.targetsHit++;}
-                else if(e.button === 0 && $scope.stimulus.target) {$scope.data.targetsMissed++;}
-                else if(e.button === 2 && !$scope.stimulus.target){$scope.data.falseAlarms++;}
+                if((e.key === 74 || e.keyCode === 74)  && $scope.stimulus.target){$scope.data.targetsHit++;}
+                else if((e.key === 70 || e.keyCode === 70) && $scope.stimulus.target) {$scope.data.targetsMissed++;}
+                else if((e.key === 74 || e.keyCode === 74) && !$scope.stimulus.target){$scope.data.falseAlarms++;}
                 else{$scope.data.correctReject++;} 
-                console.log(e.button);
+  
             }
             $scope.stimulus.clicked = true;
         }
@@ -132,7 +171,7 @@ function test($scope, $interval, $timeout){
     }
 }
 
-
+/*
 console.log("Length: " + seq.length);
 console.log("Total A: " + seq.filter(function(e){return e.letter === 'A';}).length);
 console.log("Total X: " + seq.filter(function(e){return e.letter === 'X';}).length);
@@ -143,3 +182,4 @@ console.log("Total *X: " + seq.filter(function(e, i){return e.letter === 'X' && 
 console.log("Total XA: " + seq.filter(function(e, i){return e.letter === 'X' && seq[i + 1].letter === 'A';}).length);
 console.log("Undefined: " + (600 - seq.filter(function(e){return true;}).length));
 console.log("Defined: " + seq.filter(function(e){return true;}).length);
+*/
