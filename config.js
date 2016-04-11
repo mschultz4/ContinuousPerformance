@@ -1,6 +1,6 @@
 var config = {
     //total stimuli shown
-    length: 10, 
+    length: 30, 
     // percent of *X, AX, and A* combos shown
     percent: 12, 
     //duration each stimuli is visible in milliseconds
