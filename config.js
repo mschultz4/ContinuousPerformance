@@ -6,7 +6,7 @@ var config = {
     //duration each stimuli is visible in milliseconds
     intervalOnScreen: 250, 
     //duration of break between stimuli in milliseconds
-    intervalBreak: 350
+    intervalBreak: 400
 };
 
 
